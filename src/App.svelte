@@ -1,10 +1,26 @@
 <script>
 	export let name;
+	let todo
+	let textStatus = 'empty'
+	function addTodo () {
+		if (todo.length) {
+			textStatus = 'valid'
+		} 
+
+
+	}
 </script>
 
+<svelte:head>
+<title>{name}</title>
+</svelte:head>
+
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+
+	<h1>{name}</h1>
+	<input type="text" bind:value={todoAdd}>
+	<p>{todoAdd}</p>
+	<!-- <p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p> -->
 </main>
 
 <style>
