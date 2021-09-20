@@ -1,46 +1,181 @@
 <script>
-	export let name;
-	let todo
-	let textStatus = 'empty'
-	function addTodo () {
-		if (todo.length) {
-			textStatus = 'valid'
-		} 
-
-
-	}
+  import { fade } from "svelte/transition";
+  //   export let name;
+  const title = "Todolist";
+  const msg = "liste effacée";
+  let hasChanged = false;
+  let todo = "";
+  let textStatus = "empty";
+  let todoList = [];
+  function addTodo(e) {
+    // hasChanged = false;
+    console.log(e.key);
+    if (todo.length && e.key === "Enter") {
+      textStatus = "valid";
+      todoList = [...todoList, todo];
+      todo = "";
+    }
+  }
+  function deleteTask(id) {
+    // console.log(id);
+    const removedItem = todoList.filter((itm) => itm !== id);
+    console.log(removedItem);
+    todoList = removedItem;
+    if (todoList.length === 0) {
+      hasChanged = true;
+      console.log(msg);
+      setTimeout(() => {
+        hasChanged = false;
+      }, 3000);
+    }
+  }
 </script>
 
 <svelte:head>
-<title>{name}</title>
+  <title>{title}</title>
 </svelte:head>
 
 <main>
-
-	<h1>{name}</h1>
-	<input type="text" bind:value={todoAdd}>
-	<p>{todoAdd}</p>
-	<!-- <p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p> -->
+  <div class="title">
+    <h1>{title}</h1>
+  </div>
+  <input on:keydown={addTodo} type="text" bind:value={todo} />
+  <div class="list">
+    {#each todoList as thisTodo, i}
+      <!-- <p>{todoList[0]}</p> -->
+      <div class="todo {i % 2 === 0 ? 'primary' : 'secondary'}">
+        <span>
+          {thisTodo}
+        </span>
+        <span role="button" class="semibold" on:click={deleteTask(thisTodo)}
+          >&times;</span
+        >
+      </div>
+    {/each}
+    {#if todoList.length}
+      <div
+        transition:fade={{ duration: "300" }}
+        class="todo info"
+        role="button"
+        on:click={() => (todoList = [])}
+      >
+        effacer liste
+      </div>
+    {/if}
+  </div>
+  {#if hasChanged && !todoList.length}
+    <div
+      transition:fade={{ duration: "300" }}
+      class="
+	"
+    >
+      {msg}
+    </div>
+    <!-- {:else}
+    <div /> -->
+  {/if}
+  <!-- <p>{todoAdd}</p> -->
+  <!-- <p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p> -->
 </main>
 
 <style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
+  main {
+    text-align: center;
+    padding: 0.5em;
+    /* max-width: 240px; */
+    margin: 0 auto;
+    /* box-sizing: content-box; */
+  }
+  div.title {
+    margin: 3em 0;
+    /* background: -webkit-linear-gradient(
+      left,
+      violet,
+      indigo,
+      blue,
+      green,
+      yellow,
+      orange,
+      red
+    ); */
+  }
 
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
+  h1 {
+    background: indigo;
+    /* background: -webkit-linear-gradient(
+      -240deg,
+      violet,
+      indigo,
+      blue,
+      green,
+      yellow,
+      orange,
+      red
+    ); */
 
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
+    max-width: 10em;
+    margin: 0 auto;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+    font-size: 3em;
+    font-weight: 200;
+  }
+  /* .dispMsg {
+    animation: fade 3s linear;
+  } */
+  @keyframes fade {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    10%,
+    90% {
+      opacity: 1;
+    }
+  }
+  .semibold {
+    font-weight: 600;
+    /* font-size: 1.1em; */
+  }
+  input,
+  .list {
+    width: 100%;
+    margin-bottom: 1em;
+  }
+  .list {
+    margin: 0 auto;
+  }
+  .todo {
+    display: flex;
+    justify-content: space-between;
+
+    font-size: 1.25em;
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    color: #444;
+    /* margin: 0 1em; */
+  }
+  .primary {
+    background: rgba(127, 0, 127, 0.3);
+  }
+  .secondary {
+    background: rgba(127, 127, 0, 0.3);
+  }
+  .info {
+    background: rgba(0, 127, 255, 0.3);
+    padding: 0.75em;
+    box-shadow: 8px 8px 1em rgba(0, 0, 0, 0.5);
+  }
+
+  @media (min-width: 640px) {
+    main {
+      max-width: none;
+    }
+    input,
+    .list {
+      width: 50%;
+    }
+  }
 </style>
